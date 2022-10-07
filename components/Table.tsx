@@ -1,6 +1,9 @@
 import {
+  //used for rendering rows
   flexRender,
+  //returns the rendered rows for the table
   getCoreRowModel,
+  //react table hook
   useReactTable,
 } from "@tanstack/react-table";
 import React from "react";
