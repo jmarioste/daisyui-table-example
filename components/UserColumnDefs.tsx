@@ -3,11 +3,11 @@ import { Person } from "../types/Person";
 
 const columnHelper = createColumnHelper<Person>();
 
-export const userColumnDefs: ColumnDef<Person, any>[] = [
+export const userColumnDefs = [
   columnHelper.accessor((row) => row.first_name, {
     id: "first_name",
     cell: (info) => info.getValue(),
-    footer: (info) => info.column.id,
+    header: (info) => <span>First Name</span>,
   }),
   columnHelper.accessor((row) => row.last_name, {
     id: "last_name",

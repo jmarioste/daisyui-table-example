@@ -1,5 +1,5 @@
 import type { NextPage } from "next";
-import Table from "../components/Table";
+import Table from "../components/ServerSideTable";
 
 const Home: NextPage = () => {
   return (

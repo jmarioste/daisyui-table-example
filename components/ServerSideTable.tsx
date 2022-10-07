@@ -6,26 +6,36 @@ import {
   SortingState,
   useReactTable,
 } from "@tanstack/react-table";
-import React from "react";
+import React, { memo } from "react";
 import { userColumnDefs } from "./UserColumnDefs";
-import data from "../users.json";
+
 import { Person } from "../types/Person";
-import { useRouter } from "next/router";
+
+import useSWR from "swr";
+const fetcher = (url: string) => fetch(url).then((res) => res.json());
 const Table = () => {
   const [sorting, setSorting] = React.useState<SortingState>([]);
+  let url = new URL(`http://localhost:3000/api/users`);
+  const sort = sorting.at(0);
+  if (sort) {
+    url.searchParams.set("sort_by", sort.id);
+    url.searchParams.set("sort_order", sort.desc ? "desc" : "asc");
+  }
+  const { data, isValidating } = useSWR<Person[]>(url.toString(), fetcher);
+
   const table = useReactTable({
     columns: userColumnDefs,
-    data: data as Person[],
+    data: data ?? [],
     getCoreRowModel: getCoreRowModel(),
-    getSortedRowModel: getSortedRowModel(),
     state: {
       sorting,
     },
     onSortingChange: setSorting,
+    manualSorting: true,
   });
   const headers = table.getFlatHeaders();
   const rows = table.getRowModel().rows;
-  console.log(sorting);
+
   return (
     <div>
       <table className="table table-zebra my-4 w-full">
@@ -59,6 +69,7 @@ const Table = () => {
           </tr>
         </thead>
         <tbody>
+          {isValidating && <span>Loading...</span>}
           {rows.map((row) => (
             <tr key={row.id}>
               {row.getVisibleCells().map((cell) => (
@@ -74,4 +85,4 @@ const Table = () => {
   );
 };
 
-export default Table;
+export default memo(Table);
